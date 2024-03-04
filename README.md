@@ -171,16 +171,16 @@ int_0^{1/2}  S(x) = [35/65536,-185/32768,949/32768,-3461/32768,1/2,3461/32768,-9
 
 And we can also mix with custom boundary conditions:
 ```C++
-    std::cout << "Finite volume of order 2 with Neumann condition:" << std::endl;
-    constexpr auto PS = PolynomialScheme<2>{};
-    constexpr auto P = PS.get_polynomial();
-    constexpr auto S = PS.add_eqn(P.derivate()(Rational(-1, 2))) // = u'(-1/2)
-                         .add_eqn(P.integrate({-1, 2}, { 1, 2})) // = u_0
-                         .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // = u_1
-                         .solve();
-    std::cout << "S(X) = " << S << std::endl;
-    std::cout << "left(u_0)  = " << S.integrate({-1, 2}, 0) << std::endl;
-    std::cout << "right(u_0) = " << S.integrate(0, {1, 2})  << std::endl;  
+std::cout << "Finite volume of order 2 with Neumann condition:" << std::endl;
+constexpr auto PS = PolynomialScheme<2>{};
+constexpr auto P = PS.get_polynomial();
+constexpr auto S = PS.add_eqn(P.derivate()(Rational(-1, 2))) // = u'(-1/2)
+                     .add_eqn(P.integrate({-1, 2}, { 1, 2})) // = u_0
+                     .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // = u_1
+                     .solve();
+std::cout << "S(X) = " << S << std::endl;
+std::cout << "left(u_0)  = " << S.integrate({-1, 2}, 0) << std::endl;
+std::cout << "right(u_0) = " << S.integrate(0, {1, 2})  << std::endl;  
 ```
 that displays:
 ```C++
@@ -193,6 +193,11 @@ right(u_0) = [1/16,7/16,1/16]
 
 # TODO
 
+- proper tests & CI
 - arithmetic on stencil and polynomial to express more stuff (scaling, Robin conditions, etc.),
 - batch of equations (same polynomial evaluated at multiple positions),
 - forcing usage of rational numbers with same integer type (to avoid promoted type and unwanted conversion when solving the linear system).
+- casting function from stencil to `std::array` (or other) of custom type.
+- a Rational multiplied by a float should behave like if cast to float of the rational was requested.
+- sparse polynomial? 
+- Rational should be simplified at construction so that there is not need to calling `simplify` at each operation becomes unnecessary.

@@ -63,6 +63,22 @@ int main()
     }
 
     {
+    std::cout << "Higher order Hermite spline (with 2nd order derivative):" << std::endl;
+    constexpr auto PS = PolynomialScheme<5>{};
+    constexpr auto P = PS.get_polynomial();
+    constexpr auto S = PS
+        .add_eqn(P(0)) // = f(0)
+        .add_eqn(P(1)) // = f(1)
+        .add_eqn(P.derivate()(0)) // = f'(0)
+        .add_eqn(P.derivate()(1)) // = f'(1)
+        .add_eqn(P.derivate(2)(0)) // = f"(0)
+        .add_eqn(P.derivate(2)(1)) // = f"(1)
+        .solve();
+    std::cout << "S = " << S << std::endl;
+    std::cout << std::endl;
+    }
+
+    {
     std::cout << "Finite volumes of order 2:" << std::endl;
     constexpr auto PS = PolynomialScheme<2>{};
     constexpr auto P = PS.get_polynomial();
@@ -124,12 +140,12 @@ int main()
     }
 
     {
-    std::cout << "Finite volumes of order 2 with Neumann condition:" << std::endl;
+    std::cout << "Finite volume of order 2 with Neumann condition:" << std::endl;
     constexpr auto PS = PolynomialScheme<2>{};
     constexpr auto P = PS.get_polynomial();
     constexpr auto S = PS.add_eqn(P.derivate()(Rational(-1, 2))) // = u'(-1/2)
-                         .add_eqn(P.integrate({-1, 2}, { 1, 2})) // u_0
-                         .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // u_1
+                         .add_eqn(P.integrate({-1, 2}, { 1, 2})) // = u_0
+                         .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // = u_1
                          .solve();
     std::cout << "S(X) = " << S << std::endl;
     std::cout << "left(u_0)  = " << S.integrate({-1, 2}, 0) << std::endl;
