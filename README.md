@@ -169,25 +169,63 @@ int_{-1/2}^0 S(x) = [-35/65536,185/32768,-949/32768,3461/32768,1/2,-3461/32768,9
 int_0^{1/2}  S(x) = [35/65536,-185/32768,949/32768,-3461/32768,1/2,3461/32768,-949/32768,185/32768,-35/65536]
 ```
 
-And we can also mix with custom boundary conditions:
+And we can also mix with custom boundary conditions, here with **Neumann condition**:
 ```C++
 std::cout << "Finite volume of order 2 with Neumann condition:" << std::endl;
 constexpr auto PS = PolynomialScheme<2>{};
 constexpr auto P = PS.get_polynomial();
-constexpr auto S = PS.add_eqn(P.derivate()(Rational(-1, 2))) // = u'(-1/2)
-                     .add_eqn(P.integrate({-1, 2}, { 1, 2})) // = u_0
-                     .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // = u_1
-                     .solve();
+constexpr auto S = PS
+    .add_eqn(P.integrate({-1, 2}, { 1, 2})) // \int_{-1/2}^{1/2} u = u_0
+    .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // \int_{1/2}^{3/2} u = u_1
+    .add_eqn(P.derivate()(Rational(3, 2)))  // u'(3/2) = c
+    .solve();
 std::cout << "S(X) = " << S << std::endl;
-std::cout << "left(u_0)  = " << S.integrate({-1, 2}, 0) << std::endl;
-std::cout << "right(u_0) = " << S.integrate(0, {1, 2})  << std::endl;  
+std::cout << "left(u_1)  = " << S.integrate({1, 2}, 1) << std::endl;
+std::cout << "right(u_1) = " << S.integrate(1, {3, 2})  << std::endl; 
 ```
 that displays:
 ```C++
-Finite volumes of order 2 with Neumann condition:
-S(X) = [1/24,25/24,-1/24] + [1/2,-1/2,1/2] X + [-1/2,-1/2,1/2] X^2
-left(u_0)  = [-1/16,9/16,-1/16]
-right(u_0) = [1/16,7/16,1/16]
+Finite volume of order 2 with Neumann condition:
+S(X) = [23/24,1/24,-1/24] + [-3/2,3/2,-1/2] X + [1/2,-1/2,1/2] X^2
+left(u_1)  = [1/16,7/16,-1/16]
+right(u_1) = [-1/16,9/16,1/16]
+```
+and also fill ghost values:
+```C++
+std::cout << "u_2 = " << S.integrate({3, 2}, {5, 2}) << std::endl;
+std::cout << "u_3 = " << S.integrate({5, 2}, {7, 2}) << std::endl;
+```
+that displays:
+```C++
+u_2 = [0,1,1]
+u_3 = [1,0,3]
+```
+
+Same with **Dirichlet condition**:
+```C++
+std::cout << "Finite volume of order 2 with Dirichlet condition:" << std::endl;
+constexpr auto PS = PolynomialScheme<2>{};
+constexpr auto P = PS.get_polynomial();
+constexpr auto S = PS
+    .add_eqn(P.integrate({-1, 2}, { 1, 2})) // \int_{-1/2}^{1/2} u = u_0
+    .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // \int_{1/2}^{3/2} u = u_1
+    .add_eqn(P(Rational(3, 2)))             // u(3/2) = c
+    .solve();
+std::cout << "S(X) = " << S << std::endl;
+std::cout << "left(u_1)  = " << S.integrate({1, 2}, 1) << std::endl;
+std::cout << "right(u_1) = " << S.integrate(1, {3, 2})  << std::endl;   
+std::cout << "u_2 = " << S.integrate({3, 2}, {5, 2}) << std::endl;
+std::cout << "u_3 = " << S.integrate({5, 2}, {7, 2}) << std::endl;
+std::cout << std::endl;
+```
+that displays:
+```C++
+Finite volume of order 2 with Dirichlet condition:
+S(X) = [15/16,3/16,-1/8] + [-7/4,13/4,-3/2] X + [3/4,-9/4,3/2] X^2
+left(u_1)  = [1/32,21/32,-3/16]
+right(u_1) = [-1/32,11/32,3/16]
+u_2 = [1/2,-5/2,3]
+u_3 = [5/2,-21/2,9]
 ```
 
 
@@ -201,3 +239,5 @@ right(u_0) = [1/16,7/16,1/16]
 - a Rational multiplied by a float should behave like if cast to float of the rational was requested.
 - sparse polynomial? 
 - Rational should be simplified at construction so that there is not need to calling `simplify` at each operation becomes unnecessary.
+- detecting possible overflows.
+- checking linear system inversion.

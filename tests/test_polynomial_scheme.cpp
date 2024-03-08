@@ -41,10 +41,27 @@ int main()
                         .add_eqn(P( 0)) // u_0
                         .add_eqn(P( 1)) // u_1
                         .solve();
-    std::cout << S << std::endl;
-    std::cout << S.derivate(1)(0) << std::endl;
-    std::cout << S.derivate(2)(0) << std::endl;
-    std::cout << S(-1) << std::endl;
+    std::cout << "S = " << S << std::endl;
+    std::cout << "S'(0) = " << S.derivate(1)(0) << std::endl;
+    std::cout << "S\"(0) = " << S.derivate(2)(0) << std::endl;
+    std::cout << "S(-1) = " << S(-1) << std::endl;
+    std::cout << "S(-2) = " << S(-2) << std::endl;
+    std::cout << std::endl;
+    }
+
+    {
+    std::cout << "Finite differences of order 2 with Dirichlet boundary condition:" << std::endl;
+    constexpr auto PS = PolynomialScheme<2>{}; // Order 2
+    constexpr auto P = PS.get_polynomial();
+    constexpr auto S = PS.add_eqn(P(0)) // u_0
+                        .add_eqn(P(Rational(1, 2))) // u_{1/2}
+                        .add_eqn(P(Rational(3, 2))) // u_{3/2}
+                        .solve();
+    std::cout << "S = " << S << std::endl;
+    std::cout << "S'(1/2)  = " << S.derivate(1)(Rational(1, 2)) << std::endl;
+    std::cout << "S\"(1/2)  = " << S.derivate(2)(Rational(1, 2)) << std::endl;
+    std::cout << "S(-1/2)  = " << S(Rational(-1, 2)) << std::endl;
+    std::cout << "S(-3/2)  = " << S(Rational(-3, 2)) << std::endl;
     std::cout << std::endl;
     }
 
@@ -143,13 +160,34 @@ int main()
     std::cout << "Finite volume of order 2 with Neumann condition:" << std::endl;
     constexpr auto PS = PolynomialScheme<2>{};
     constexpr auto P = PS.get_polynomial();
-    constexpr auto S = PS.add_eqn(P.derivate()(Rational(-1, 2))) // = u'(-1/2)
-                         .add_eqn(P.integrate({-1, 2}, { 1, 2})) // = u_0
-                         .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // = u_1
-                         .solve();
+    constexpr auto S = PS
+        .add_eqn(P.integrate({-1, 2}, { 1, 2})) // = u_0
+        .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // = u_1
+        .add_eqn(P.derivate()(Rational(3, 2))) //  = u'(3/2)
+        .solve();
     std::cout << "S(X) = " << S << std::endl;
-    std::cout << "left(u_0)  = " << S.integrate({-1, 2}, 0) << std::endl;
-    std::cout << "right(u_0) = " << S.integrate(0, {1, 2})  << std::endl;   
+    std::cout << "left(u_1)  = " << S.integrate({1, 2}, 1) << std::endl;
+    std::cout << "right(u_1) = " << S.integrate(1, {3, 2})  << std::endl;   
+    std::cout << "u_2 = " << S.integrate({3, 2}, {5, 2}) << std::endl;
+    std::cout << "u_3 = " << S.integrate({5, 2}, {7, 2}) << std::endl;
+    std::cout << std::endl;
+    }
+
+    {
+    std::cout << "Finite volume of order 2 with Dirichlet condition:" << std::endl;
+    constexpr auto PS = PolynomialScheme<2>{};
+    constexpr auto P = PS.get_polynomial();
+    constexpr auto S = PS
+        .add_eqn(P.integrate({-1, 2}, { 1, 2})) // \int_{-1/2}^{1/2} u = u_0
+        .add_eqn(P.integrate({ 1, 2}, { 3, 2})) // \int_{1/2}^{3/2} u = u_1
+        .add_eqn(P(Rational(3, 2)))             // u(3/2) = 0
+        .solve();
+    std::cout << "S(X) = " << S << std::endl;
+    std::cout << "left(u_1)  = " << S.integrate({1, 2}, 1) << std::endl;
+    std::cout << "right(u_1) = " << S.integrate(1, {3, 2})  << std::endl;   
+    std::cout << "u_2 = " << S.integrate({3, 2}, {5, 2}) << std::endl;
+    std::cout << "u_3 = " << S.integrate({5, 2}, {7, 2}) << std::endl;
+    std::cout << std::endl;
     }
 
     return 0;
