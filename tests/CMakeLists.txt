@@ -3,6 +3,7 @@ set(TESTS_FILES
     test_gauss
     test_polynomial
     test_polynomial_scheme
+    test_tmp
 )
 
 foreach(FILE ${TESTS_FILES})

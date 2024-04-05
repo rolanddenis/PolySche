@@ -15,5 +15,6 @@ OPTION(BUILD_TESTING "Build tests." ON)
 if (BUILD_TESTING)
   enable_testing()
   add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/examples)
 endif (BUILD_TESTING)
 

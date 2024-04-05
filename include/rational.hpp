@@ -7,45 +7,52 @@
 #include <array>
 #include <cassert>
 
-/**
- * Constexpr implementation of rational numbers (fraction of signed integers)
+/** @brief Constexpr implementation of rational numbers (fraction of signed integers)
  * 
  * This implementation is not meant for efficiency but instead to be used occasionally or at compile time.
  * Each operation on a Rational is designed to avoid overflow and will return reduced rational.
+ * 
+ * @tparam T    Value type of the numerator and the denominator of the fraction (signed integers only).
  */
-
 template <typename T>
 struct Rational
 {
     using value_type = T;
-    static_assert(std::is_signed_v<value_type>, "Rational integer type must be signed");
+    static_assert(std::is_signed_v<value_type> and std::is_arithmetic_v<value_type>, "Rational type must be of signed integer type");
 
-    value_type p, q;
+    value_type p = 0, q = 1;
 
-    constexpr Rational(T p = 0, T q = 1) : p(p), q(q) {}
-
-    constexpr bool is_valid() const noexcept
+    constexpr Rational(T pp = 0, T qq = 1)
     {
-        return q != 0;
-    }
+        // Always constructing a valid and simplified rational
+        assert(qq != T(0) && "Not valid rational");
+        qq = (qq == T(0)) ? T(1) : qq; 
 
-    constexpr Rational<T> simplify() const noexcept
-    {
-        assert(is_valid() && "Not valid rational");
-        T qq = (q == 0) ? T(1) : q; 
-
-        // Rational should be valid
-        T g = std::gcd(p, qq);
-        T pp = p / g;
-        qq = q / g;
-        if (qq < 0)
+        T g = std::gcd(pp, qq);
+        pp = pp / g;
+        qq = qq / g;
+        if (qq < T(0))
         {
             qq = -qq;
             pp = -pp;
         }
-        return Rational<T>(pp, qq);
+        p = pp;
+        q = qq;
     }
 
+    /// true if the denominator is not null
+    constexpr bool is_valid() const noexcept
+    {
+        return q != T(0);
+    }
+
+    /// true if the numerator is null
+    constexpr bool is_zero() const noexcept
+    {
+        return p == T(0);
+    }
+
+    /// Conversion to an arithmetic type (or any with a division operator)
     template <typename U>
     constexpr operator U () const noexcept
     {
@@ -54,32 +61,46 @@ struct Rational
 
 };
 
+///////////////////////////////////////////////////////////////////////////////
 // Type traits
+
 template <typename T>
 struct IsRational : std::false_type {};
 
 template <typename T>
 struct IsRational<Rational<T>> : std::true_type {};
 
+/// Is true if type @c T decays to a Rational
 template <typename T>
 inline constexpr bool is_rational_v = IsRational<std::decay_t<T>>::value;
 
+/// Alias to the value type of a Rational @c T
 template <typename T>
 using rational_value_t = typename std::decay_t<T>::value_type;
 
 namespace std
 {
+/// Overload of std::common_type for a Rational and an arithmetic type
 template <typename T, typename U>
 struct common_type<Rational<T>, U> { using type = Rational<std::make_signed_t<std::common_type_t<T, U>>>; };
 
+/// Overload of std::common_type for an arithmetic type and a Rational
 template <typename T, typename U>
 struct common_type<U, Rational<T>> { using type = Rational<std::make_signed_t<std::common_type_t<T, U>>>; };
 
+/// Overload of std::common_type for two Rationals
 template <typename T, typename U>
 struct common_type<Rational<T>, Rational<U>> { using type = Rational<std::common_type_t<T, U>>; };
 }
 
-/// Helper to reduce code duplication in binary operations
+/** @brief Helper to reduce code duplication in binary operations
+ * 
+ * It forward given paramater "as it" if it is a Rational
+ * and otherwise return the result of it's conversion to a Rational.
+ * 
+ * It allows generalize binary operations between a Rational and another type
+ * (Rational or arithmetic) without duplicating code for each combinaison.
+ */
 template <typename T>
 constexpr auto as_rational(T && v) noexcept -> decltype(auto)
 {
@@ -103,6 +124,7 @@ constexpr void swap(Rational<T> & lhs, Rational<T> & rhs) noexcept
     rhs = tmp;
 }
 
+/// Product
 template <
     typename LHS,
     typename RHS,
@@ -112,9 +134,10 @@ constexpr auto operator* (LHS && lhs, RHS && rhs) noexcept
 {
     auto && lhs_r = as_rational(std::forward<LHS>(lhs));
     auto && rhs_r = as_rational(std::forward<RHS>(rhs));
-    return Rational(lhs_r.p * rhs_r.p, lhs_r.q * rhs_r.q).simplify();
+    return Rational(lhs_r.p * rhs_r.p, lhs_r.q * rhs_r.q);
 }
 
+/// Division
 template <
     typename LHS,
     typename RHS,
@@ -124,9 +147,10 @@ constexpr auto operator/ (LHS && lhs, RHS && rhs) noexcept
 {
     auto && lhs_r = as_rational(std::forward<LHS>(lhs));
     auto && rhs_r = as_rational(std::forward<RHS>(rhs));
-    return Rational(lhs_r.p * rhs_r.q, lhs_r.q * rhs_r.p).simplify();
+    return Rational(lhs_r.p * rhs_r.q, lhs_r.q * rhs_r.p);
 }
 
+/// Addition
 template <
     typename LHS,
     typename RHS,
@@ -137,9 +161,10 @@ constexpr auto operator+ (LHS && lhs, RHS && rhs) noexcept
     auto && lhs_r = as_rational(std::forward<LHS>(lhs));
     auto && rhs_r = as_rational(std::forward<RHS>(rhs));
     auto lcm = std::lcm(lhs_r.q, rhs_r.q);
-    return Rational(lhs_r.p * (lcm / lhs_r.q) + rhs_r.p * (lcm / rhs_r.q), lcm).simplify();
+    return Rational(lhs_r.p * (lcm / lhs_r.q) + rhs_r.p * (lcm / rhs_r.q), lcm);
 }
 
+/// Subtraction
 template <
     typename LHS,
     typename RHS,
@@ -150,9 +175,10 @@ constexpr auto operator- (LHS && lhs, RHS && rhs) noexcept
     auto && lhs_r = as_rational(std::forward<LHS>(lhs));
     auto && rhs_r = as_rational(std::forward<RHS>(rhs));
     auto lcm = std::lcm(lhs_r.q, rhs_r.q);
-    return Rational(lhs_r.p * (lcm / lhs_r.q) - rhs_r.p * (lcm / rhs_r.q), lcm).simplify();
+    return Rational(lhs_r.p * (lcm / lhs_r.q) - rhs_r.p * (lcm / rhs_r.q), lcm);
 }
 
+/// Equal to
 template <
     typename LHS,
     typename RHS,
@@ -168,6 +194,7 @@ constexpr auto operator== (LHS && lhs, RHS && rhs) noexcept
     return a == b;
 }
 
+/// Lower than
 template <
     typename LHS,
     typename RHS,
@@ -186,6 +213,7 @@ constexpr auto operator< (LHS && lhs, RHS && rhs) noexcept
         return a > b;
 }
 
+/// Greater than
 template <
     typename LHS,
     typename RHS,
@@ -204,12 +232,14 @@ constexpr auto operator> (LHS && lhs, RHS && rhs) noexcept
         return a < b;
 }
 
+/// Sign bit of a Rational (true if negative, false otherwise)
 template <typename T>
 constexpr bool signbit(Rational<T> const& r) noexcept
 {
     return not(std::signbit(r.p) xor std::signbit(r.q));
 }
 
+/// Absolute value of a Rational
 template <typename T>
 constexpr auto abs(Rational<T> const& r) noexcept
 {
@@ -220,15 +250,7 @@ constexpr auto abs(Rational<T> const& r) noexcept
     );
 }
 
-template <
-    typename T,
-    typename = std::enable_if_t<is_rational_v<T>>
->
-constexpr auto simplify(T && r) noexcept
-{
-    return r.simplify();
-}
-
+/// Representation of a Rational
 template <typename T>
 std::ostream& operator<< (std::ostream& out, Rational<T> const& r)
 {

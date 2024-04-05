@@ -1,66 +1,123 @@
-#include <iostream>
-
 #include "rational.hpp"
+#include "utils.hpp"
 
 int main()
 {
     using T = int;
-    constexpr Rational<T> a{3, 2};
-    std::cout << "a = " << a << std::endl;
-    std::cout << "is_rational_v(a) = " << is_rational_v<decltype(a)> << std::endl;
+    
+    // Construction from an integer
+    {
+    constexpr Rational<T> a(3);
+    CHECK(a.is_valid() && !a.is_zero());
+    CHECK(is_rational_v<decltype(a)>);
+    CHECK(a.p == 3 && a.q == 1);
+    CHECK(static_cast<double>(a) == 3.);
+    CHECK(a == Rational<T>(12, 4));
+    CHECK(signbit(a));
+    CHECK(abs(a) == a);
+    }
 
-    constexpr auto a3r = a * 3;
-    std::cout << "a * 3 = " << a3r << std::endl;
+    // Construction from zero
+    {
+    constexpr Rational<T> a(0);
+    CHECK(a.is_valid() && a.is_zero());
+    CHECK(is_rational_v<decltype(a)>);
+    CHECK(a.p == 0 && a.q == 1);
+    CHECK(static_cast<double>(a) == 0.);
+    CHECK(a == Rational<T>(0, 4));
+    CHECK(signbit(a));
+    CHECK(abs(a) == a);
+    }
 
-    constexpr auto a3l = 3 * a;
-    std::cout << "3 * a = " << a3l << std::endl;
+    // TODO: test simplify at construction
 
-    constexpr Rational<T> b{3};
-    std::cout << "b = " << b << std::endl;
+    // Construction from two integers
+    {
+    constexpr Rational<T> a(3, 2);
+    CHECK(a.is_valid() && !a.is_zero());
+    CHECK(is_rational_v<decltype(a)>);
+    CHECK(a.p == 3 && a.q == 2);
+    CHECK(static_cast<double>(a) == 1.5);
+    CHECK(a == Rational<T>(-9, -6));
+    CHECK(signbit(a));
+    CHECK(abs(a) == a);
+    }
 
-    constexpr Rational<T> c{-1, 10};
-    std::cout << "c = " << c << std::endl;
+    // Construction of a negative rational
+    {
+    constexpr Rational<T> a(-3, 2);
+    CHECK(a.is_valid() && !a.is_zero());
+    CHECK(is_rational_v<decltype(a)>);
+    CHECK(a.p == -3 && a.q == 2);
+    CHECK(static_cast<double>(a) == -1.5);
+    CHECK(a == Rational<T>(9, -6));
+    CHECK(not signbit(a));
+    CHECK(abs(a) == Rational<T>(3, 2));
+    }
 
-    constexpr auto ac = a * c;
-    std::cout << "a * c = " << ac << std::endl;
+    // Internal product of two rationals
+    {
+    constexpr Rational<T> a(3, 2);
+    constexpr Rational<T> b(4, 3);
+    constexpr auto ab = a * b;
+    constexpr auto ba = b * a;
 
-    constexpr auto d = Rational(2ll, -20ll);
-    std::cout << "d = " << d << std::endl;
-    std::cout << "d as double = " << static_cast<double>(d) << std::endl;
+    CHECK(ab.p == 2 and ba.p == 2);
+    CHECK(ab.q == 1 and ba.q == 1);
+    }
+     
+    // Internal sum of two rationals
+    {
+    constexpr Rational<T> a(1, 2);
+    constexpr Rational<T> b(3, 4);
+    constexpr auto ab = a + b;
+    constexpr auto ba = b + a;
 
-    using std::signbit;
-    constexpr bool ds = signbit(d);
-    std::cout << "signbit(d) = " << ds << std::endl;
+    CHECK(ab.p == 5 and ba.p == 5);
+    CHECK(ab.q == 4 and ba.q == 4);
+    }
 
-    using std::abs;
-    constexpr auto da = abs(d);
-    std::cout << "abs(d) = " << da << std::endl;
+    // External product of a rational and an integer
+    {
+    constexpr Rational<T> a(3, 4);
+    constexpr T b = 2;
+    constexpr auto ab = a * b;
+    constexpr auto ba = b * a;
+    constexpr auto ab2 = 2 * ab;
 
-    constexpr auto dss = d.simplify();
-    std::cout << "simplify(d) = " << dss << std::endl;
+    CHECK(ab.p == 3 and ba.p == 3);
+    CHECK(ab.q == 2 and ba.q == 2);
+    CHECK(ab2 == 3);
+    }
 
-    std::cout << "d * a == c * a ? " <<  ((d * a) == (c * a)) << std::endl;
+    // External sum of a rational and an integer
+    {
+    constexpr Rational<T> a(2, 3);
+    constexpr T b = 2;
+    constexpr auto ab = a + b;
+    constexpr auto ba = b + a;
 
-    constexpr bool cmp_ad = a < d;
-    std::cout << "a < d ? " << cmp_ad << std::endl;
+    CHECK(ab.p == 8 and ba.p == 8);
+    CHECK(ab.q == 3 and ba.q == 3);
+    }
 
-    constexpr bool cmp_da = d < a;
-    std::cout << "d < a ? " << cmp_da << std::endl;
+    // Comparison (TODO: constexpr)
+    {
+        auto check_helper = [] (auto a, auto b)
+        {
+            bool lt = a < b; CHECK(lt);
+            bool ngt = not (a > b); CHECK(ngt);
+            bool gt = b > a; CHECK(gt);
+            bool nlt = not (b < a); CHECK(nlt);
+        };
 
-    constexpr bool cmp_d2 = d < 2;
-    std::cout << "d < 2 ? " << cmp_d2 << std::endl;
-
-    constexpr auto dummy = (a + b) * c + d;
-    std::cout << "dummy = " << dummy << std::endl;
-    std::cout << "simplify(dummy) = " << simplify(dummy) << std::endl;
-
-    constexpr std::size_t i = 3;
-    constexpr auto ri = i * dummy;
-    std::cout << "ri = " << ri  << std::endl;
-    constexpr Rational<T> rit = ri;
-    std::cout << "rit = " << rit << std::endl;
+        check_helper(Rational<T>(1, 2), Rational<T>(2, 3));
+        check_helper(Rational<T>(-2, 3), Rational<T>(1, 3));
+        check_helper(Rational<T>(2, -3), Rational<T>(1, 3));
+        check_helper(-1, Rational<T>(1, 2));
+        check_helper(Rational<T>(1, 2), 2);
+    }
 
 
-
-    return 0;
+    return return_code();
 }
