@@ -22,7 +22,7 @@ jobs:
         run: cd .build && make -j $(nproc)
 
       - name: Running
-        run: make test
+        run: cd .build && make test
 
   examples:
     strategy:
@@ -36,4 +36,4 @@ jobs:
         run: cmake -S . -B .build -DCMAKE_BUILD_TYPE=Debug -DBUILD_EXAMPLES=ON -DBUILD_TESTING=OFF
 
       - name: Building
-        run: cd build && make -j $(nproc)
+        run: cd .build && make -j $(nproc)
