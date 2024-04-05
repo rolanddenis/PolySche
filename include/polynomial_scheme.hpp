@@ -15,6 +15,8 @@ struct PolynomialScheme
     std::array<std::array<T, Order + 1>, Order + 1> matrix;
     std::size_t index = 0;
 
+    constexpr PolynomialScheme() {};
+
     constexpr auto get_polynomial() const noexcept
     {
         Polynomial<T, Order, Order + 1> P{};
