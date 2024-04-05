@@ -236,7 +236,7 @@ constexpr auto operator> (LHS && lhs, RHS && rhs) noexcept
 template <typename T>
 constexpr bool signbit(Rational<T> const& r) noexcept
 {
-    return not(std::signbit(r.p) xor std::signbit(r.q));
+    return (r.p < T(0)) xor (r.q < T(0));
 }
 
 /// Absolute value of a Rational

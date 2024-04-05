@@ -13,7 +13,7 @@ int main()
     CHECK(a.p == 3 && a.q == 1);
     CHECK(static_cast<double>(a) == 3.);
     CHECK(a == Rational<T>(12, 4));
-    CHECK(signbit(a));
+    CHECK(not signbit(a));
     CHECK(abs(a) == a);
     }
 
@@ -25,7 +25,7 @@ int main()
     CHECK(a.p == 0 && a.q == 1);
     CHECK(static_cast<double>(a) == 0.);
     CHECK(a == Rational<T>(0, 4));
-    CHECK(signbit(a));
+    CHECK(not signbit(a));
     CHECK(abs(a) == a);
     }
 
@@ -39,7 +39,7 @@ int main()
     CHECK(a.p == 3 && a.q == 2);
     CHECK(static_cast<double>(a) == 1.5);
     CHECK(a == Rational<T>(-9, -6));
-    CHECK(signbit(a));
+    CHECK(not signbit(a));
     CHECK(abs(a) == a);
     }
 
@@ -51,7 +51,7 @@ int main()
     CHECK(a.p == -3 && a.q == 2);
     CHECK(static_cast<double>(a) == -1.5);
     CHECK(a == Rational<T>(9, -6));
-    CHECK(not signbit(a));
+    CHECK(signbit(a));
     CHECK(abs(a) == Rational<T>(3, 2));
     }
 
