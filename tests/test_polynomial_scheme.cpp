@@ -148,6 +148,7 @@ int main()
     std::cout << std::endl;
     }
 
+#if 0 // Reaches maximum step limit for constexpr evaluation in LLVM
     {
     std::cout << "Finite volume of order 10:" << std::endl;
     constexpr auto S = make_finite_volume<10>();
@@ -155,6 +156,7 @@ int main()
     std::cout << "int_0^{1/2} S = " << S.integrate(0, {1, 2}) << std::endl;
     std::cout << std::endl;
     }
+#endif
 
     {
     std::cout << "Finite volume of order 2 with Neumann condition:" << std::endl;

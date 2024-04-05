@@ -1,3 +1,5 @@
+![CI](https://github.com/rolanddenis/PolySche/actions/workflows/ci.yml/badge.svg)
+
 The goal of this C++17 library is to statically (eventually at compile-time) **generate stencils** involved
 in finite differences and finite volumes schemes that are based on **polynomial interpolation**.
 
