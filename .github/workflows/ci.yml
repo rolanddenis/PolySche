@@ -19,7 +19,7 @@ jobs:
         run: cmake -S . -B .build -DCMAKE_BUILD_TYPE=Debug -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=ON
 
       - name: Building
-        run: make -j $(nproc)
+        run: cd .build && make -j $(nproc)
 
       - name: Running
         run: make test
@@ -36,4 +36,4 @@ jobs:
         run: cmake -S . -B .build -DCMAKE_BUILD_TYPE=Debug -DBUILD_EXAMPLES=ON -DBUILD_TESTING=OFF
 
       - name: Building
-        run: make -j $(nproc)
+        run: cd build && make -j $(nproc)
