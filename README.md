@@ -1,3 +1,4 @@
+[![Project license](https://img.shields.io/github/license/rolanddenis/PolySche.svg?style=flat-square)](LICENSE)
 ![CI](https://github.com/rolanddenis/PolySche/actions/workflows/ci.yml/badge.svg)
 
 The goal of this C++17 library is to statically (eventually at compile-time) **generate stencils** involved
