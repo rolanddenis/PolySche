@@ -11,13 +11,13 @@ add_compile_options($<$<CONFIG:Release>:-mtune=native>)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-OPTION(BUILD_TESTING "Build tests." ON)
+OPTION(BUILD_TESTING "Build tests." OFF)
 if (BUILD_TESTING)
   enable_testing()
   add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
 endif (BUILD_TESTING)
 
-OPTION(BUILD_EXAMPLES "Build examples." ON)
+OPTION(BUILD_EXAMPLES "Build examples." OFF)
 if (BUILD_EXAMPLES)
   add_subdirectory(${PROJECT_SOURCE_DIR}/examples)
 endif (BUILD_EXAMPLES)
