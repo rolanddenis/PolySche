@@ -7,6 +7,9 @@
 #include <array>
 #include <cassert>
 
+namespace polysche
+{
+
 /** @brief Constexpr implementation of rational numbers (fraction of signed integers)
  * 
  * This implementation is not meant for efficiency but instead to be used occasionally or at compile time.
@@ -78,20 +81,24 @@ inline constexpr bool is_rational_v = IsRational<std::decay_t<T>>::value;
 template <typename T>
 using rational_value_t = typename std::decay_t<T>::value_type;
 
+} // namespace polysche
+
 namespace std
 {
 /// Overload of std::common_type for a Rational and an arithmetic type
 template <typename T, typename U>
-struct common_type<Rational<T>, U> { using type = Rational<std::make_signed_t<std::common_type_t<T, U>>>; };
+struct common_type<polysche::Rational<T>, U> { using type = polysche::Rational<std::make_signed_t<std::common_type_t<T, U>>>; };
 
 /// Overload of std::common_type for an arithmetic type and a Rational
 template <typename T, typename U>
-struct common_type<U, Rational<T>> { using type = Rational<std::make_signed_t<std::common_type_t<T, U>>>; };
+struct common_type<U, polysche::Rational<T>> { using type = polysche::Rational<std::make_signed_t<std::common_type_t<T, U>>>; };
 
 /// Overload of std::common_type for two Rationals
 template <typename T, typename U>
-struct common_type<Rational<T>, Rational<U>> { using type = Rational<std::common_type_t<T, U>>; };
+struct common_type<polysche::Rational<T>, polysche::Rational<U>> { using type = polysche::Rational<std::common_type_t<T, U>>; };
 }
+
+namespace polysche {
 
 /** @brief Helper to reduce code duplication in binary operations
  * 
@@ -260,3 +267,5 @@ std::ostream& operator<< (std::ostream& out, Rational<T> const& r)
         out << "/" << rs.q;
     return out;
 }
+
+} // namespace polysche

@@ -2,6 +2,9 @@
 
 #include <array>
 
+namespace polysche
+{
+
 // std::swap isn't constexpr until C++20
 template <
     typename T,
@@ -108,3 +111,5 @@ constexpr std::array<std::array<T, N>, N> gauss_inv(std::array<std::array<T, N>,
             inv[i][j] = reducted_A[i][j + N];
     return inv;
 }
+
+} // namespace polysche

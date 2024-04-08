@@ -7,6 +7,7 @@
 template <std::size_t Order>
  auto make_finite_volume() noexcept
 {
+    using polysche::PolynomialScheme;
     auto PS = PolynomialScheme<Order>{};
     auto P = PS.get_polynomial();
     for (int i = - static_cast<int>(Order) / 2; i <= static_cast<int>(Order) / 2; ++i)
@@ -17,6 +18,9 @@ template <std::size_t Order>
 
 int main()
 {
+    using polysche::PolynomialScheme;
+    using polysche::Rational;
+    
     {
     std::cout << "Finite differences of order 2:" << std::endl;
      auto PS = PolynomialScheme<2>{}; // Order 2
