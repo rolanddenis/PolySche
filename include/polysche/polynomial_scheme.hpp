@@ -6,6 +6,8 @@
 #include "polynomial.hpp"
 #include "gauss.hpp"
 
+namespace polysche
+{
 template <
     std::size_t Order,
     typename T = Rational<long long int>
@@ -40,3 +42,5 @@ struct PolynomialScheme
         return P;
     }
 };
+
+} // namespace polysche

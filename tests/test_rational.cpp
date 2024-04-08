@@ -1,10 +1,13 @@
-#include "rational.hpp"
+#include <polysche/rational.hpp>
+
 #include "utils.hpp"
 
 int main()
 {
     using T = int;
-    
+    using polysche::Rational;
+    using polysche::is_rational_v;
+
     // Construction from an integer
     {
     constexpr Rational<T> a(3);

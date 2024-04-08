@@ -1,9 +1,9 @@
 #include <iostream>
-
-#include "rational.hpp"
+#include <polysche/rational.hpp>
 
 int main()
 {
+    using namespace polysche;
     using T = int;
     constexpr Rational<T> a{3, 2};
     std::cout << "a = " << a << std::endl;

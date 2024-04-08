@@ -26,6 +26,11 @@ since general formulation is easily recovered using a simple scaling function (t
 
 For a 2nd-order approximation, the code looks like:
 ```C++
+#include <polysche/polynomial_scheme.hpp>
+
+...
+
+using polysche::PolynomialScheme;
 constexpr auto PS = PolynomialScheme<2>{}; // Order 2 interpolation
 constexpr auto P = PS.get_polynomial(); // Gets the canonical polynomial used to express the constraints
 constexpr auto S = PS.add_eqn(P(-1)) // constraint P(-1) = u_{-1} 
@@ -75,6 +80,11 @@ We can then reuse this polynomial to compute another stencils, for example :
 
 We can also add constraint on the derivative of the interpolation polynomial, for example to include a boundary condition like a Neumann condition :
 ```C++
+#include <polysche/polynomial_scheme.hpp>
+
+...
+
+using polysche::PolynomialScheme;
 constexpr auto PS = PolynomialScheme<2>{}; // Order 2 interpolation
 constexpr auto P = PS.get_polynomial(); // Gets the canonical polynomial used to express the constraints
 constexpr auto S = PS.add_eqn(P.derivative()(0)) // constraint P'(0) = v_0
@@ -105,6 +115,11 @@ meaning that the ghost cell $u_{-1}$ should be filled with $-2 u'_0 + u_1$.
 
 The same way, we can recover higher order interpolation like the cubic Hermite spline:
 ```C++
+#include <polysche/polynomial_scheme.hpp>
+
+...
+
+using polysche::PolynomialScheme;
 constexpr auto PS = PolynomialScheme<3>{}; // Interpolation of order 3
 constexpr auto P = PS.get_polynomial();
 constexpr auto S = PS
@@ -129,6 +144,11 @@ multi-resolution methods.
 
 A first example with interpolation of order 2:
 ```C++
+#include <polysche/polynomial_scheme.hpp>
+
+...
+
+using polysche::PolynomialScheme;
 constexpr auto PS = PolynomialScheme<2>{};
 constexpr auto P = PS.get_polynomial();
 constexpr auto S = PS.add_eqn(P.integrate({-3, 2}, {-1, 2})) // = u_{-1}
@@ -149,6 +169,10 @@ that is the expected stencil relatively to a factor 2 (integration should be sca
 
 We can also generalize it to higher order interpolation:
 ```C++
+#include <polysche/polynomial_scheme.hpp>
+
+using polysche::PolynomialScheme;
+
 template <std::size_t Order>
 constexpr auto make_finite_volume() noexcept
 {
@@ -174,6 +198,11 @@ int_0^{1/2}  S(x) = [35/65536,-185/32768,949/32768,-3461/32768,1/2,3461/32768,-9
 
 And we can also mix with custom boundary conditions, here with **Neumann condition**:
 ```C++
+#include <polysche/polynomial_scheme.hpp>
+
+...
+
+using polysche::PolynomialScheme;
 std::cout << "Finite volume of order 2 with Neumann condition:" << std::endl;
 constexpr auto PS = PolynomialScheme<2>{};
 constexpr auto P = PS.get_polynomial();
@@ -206,6 +235,11 @@ u_3 = [1,0,3]
 
 Same with **Dirichlet condition**:
 ```C++
+#include <polysche/polynomial_scheme.hpp>
+
+...
+
+using polysche::PolynomialScheme;
 std::cout << "Finite volume of order 2 with Dirichlet condition:" << std::endl;
 constexpr auto PS = PolynomialScheme<2>{};
 constexpr auto P = PS.get_polynomial();

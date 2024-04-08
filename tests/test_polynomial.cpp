@@ -1,12 +1,16 @@
 #include <iostream>
 
-#include "polynomial.hpp"
+#include <polysche/polynomial.hpp>
+#include <polysche/rational.hpp>
+
 #include "utils.hpp"
-#include "rational.hpp"
 
 
 int main()
 {
+    using polysche::Rational;
+    using polysche::Polynomial;
+    
     using T = Rational<int>;
     constexpr Polynomial<T, 2, 3> P({{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}});
     std::cout << "P = " << P << std::endl;

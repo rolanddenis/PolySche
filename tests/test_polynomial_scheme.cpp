@@ -1,12 +1,14 @@
 #include <iostream>
 
-#include "polynomial_scheme.hpp"
+#include <polysche/polynomial_scheme.hpp>
+#include <polysche/rational.hpp>
+
 #include "utils.hpp"
-#include "rational.hpp"
 
 template <std::size_t Order>
 constexpr auto make_finite_volume() noexcept
 {
+    using polysche::PolynomialScheme;
     auto PS = PolynomialScheme<Order>{};
     auto P = PS.get_polynomial();
     for (int i = - static_cast<int>(Order) / 2; i <= static_cast<int>(Order) / 2; ++i)
@@ -17,6 +19,9 @@ constexpr auto make_finite_volume() noexcept
 
 int main()
 {
+    using polysche::PolynomialScheme;
+    using polysche::Rational;
+
     {
     std::cout << "Finite differences of order 2:" << std::endl;
     constexpr auto PS = PolynomialScheme<2>{}; // Order 2

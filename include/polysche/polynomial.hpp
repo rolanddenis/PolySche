@@ -4,6 +4,9 @@
 #include <type_traits>
 #include <iostream>
 
+namespace polysche
+{
+
 template <
     typename T,
     std::size_t Degree,
@@ -101,3 +104,5 @@ std::ostream & operator<< (std::ostream & out, Polynomial<T, Degree, N> const& P
     }
     return out;
 }
+
+} // namespace polysche
