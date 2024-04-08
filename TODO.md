@@ -8,6 +8,5 @@
 - casting function from stencil to `std::array` (or other) of custom type.
 - a Rational multiplied by a float should behave like if cast to float of the rational was requested.
 - sparse polynomial? 
-- Rational should be simplified at construction so that there is not need to calling `simplify` at each operation becomes unnecessary.
 - detecting possible overflows.
 - checking linear system inversion.
