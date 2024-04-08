@@ -16,7 +16,6 @@ constexpr auto make_finite_volume() noexcept
     return PS.solve();
 }
 
-
 int main()
 {
     using polysche::PolynomialScheme;
