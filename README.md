@@ -1,5 +1,9 @@
 [![Project license](https://img.shields.io/github/license/rolanddenis/PolySche.svg?style=flat-square)](LICENSE)
 ![CI](https://github.com/rolanddenis/PolySche/actions/workflows/ci.yml/badge.svg)
+![GitHub top language](https://img.shields.io/github/languages/top/rolanddenis/polysche)
+![GitHub Release](https://img.shields.io/github/v/release/rolanddenis/polysche)
+
+
 
 The goal of this C++17 library is to statically (eventually at compile-time) **generate stencils** involved
 in finite differences and finite volumes schemes that are based on **polynomial interpolation**.
