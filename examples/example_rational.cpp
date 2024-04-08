@@ -1,6 +1,5 @@
 #include <iostream>
-
-#include "rational.hpp"
+#include <polysche/rational.hpp>
 
 int main()
 {

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <array>
 
-#include "gauss.hpp"
-#include "rational.hpp"
+#include <polysche/gauss.hpp>
+#include <polysche/rational.hpp>
 #include "utils.hpp"
 
 int main()

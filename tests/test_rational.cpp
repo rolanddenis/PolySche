@@ -1,4 +1,5 @@
-#include "rational.hpp"
+#include <polysche/rational.hpp>
+
 #include "utils.hpp"
 
 int main()

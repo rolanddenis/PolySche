@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include "polynomial_scheme.hpp"
+#include <polysche/polynomial_scheme.hpp>
+#include <polysche/rational.hpp>
+
 #include "utils.hpp"
-#include "rational.hpp"
 
 template <std::size_t Order>
  auto make_finite_volume() noexcept

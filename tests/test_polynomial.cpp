@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include "polynomial.hpp"
+#include <polysche/polynomial.hpp>
+#include <polysche/rational.hpp>
+
 #include "utils.hpp"
-#include "rational.hpp"
 
 
 int main()
