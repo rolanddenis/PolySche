@@ -11,3 +11,4 @@
 - detecting possible overflows.
 - checking linear system inversion.
 - filling polynomial's stencil with actual values so that to get a proper polynomial function (eg for interpolation purpose).
+- possible dynamic (runtime) order for the polynomial scheme
