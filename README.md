@@ -2,7 +2,7 @@
 ![CI](https://github.com/rolanddenis/PolySche/actions/workflows/ci.yml/badge.svg)
 ![GitHub top language](https://img.shields.io/github/languages/top/rolanddenis/polysche)
 ![GitHub Release](https://img.shields.io/github/v/release/rolanddenis/polysche)
-
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/polysche.svg)](https://anaconda.org/conda-forge/polysche)
 
 
 The goal of this C++17 library is to statically (eventually at compile-time) **generate stencils** involved
