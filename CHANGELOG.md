@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/rolanddenis/PolySche/compare/v0.1.1...v0.1.2) (2024-04-10)
+
+
+### core
+
+* release 0.1.2 ([a16bfc8](https://github.com/rolanddenis/PolySche/commit/a16bfc8d717f161e9dad6878210aa9591c9c4e77))
+
 ## [0.1.1](https://github.com/rolanddenis/PolySche/compare/v0.1.0...v0.1.1) (2024-04-08)
 
 
