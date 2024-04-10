@@ -7,6 +7,10 @@
 
 * release 0.1.2 ([a16bfc8](https://github.com/rolanddenis/PolySche/commit/a16bfc8d717f161e9dad6878210aa9591c9c4e77))
 
+### Build
+
+* adding proper CMake config and version file in lib/cmake ([1a3f4a8](https://github.com/rolanddenis/PolySche/commit/1a3f4a805af5b195b5caf0182f0a23f6522377c8))
+
 ## [0.1.1](https://github.com/rolanddenis/PolySche/compare/v0.1.0...v0.1.1) (2024-04-08)
 
 
