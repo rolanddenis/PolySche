@@ -46,8 +46,26 @@ if (BUILD_EXAMPLES)
   add_subdirectory("${PROJECT_SOURCE_DIR}/examples")
 endif (BUILD_EXAMPLES)
 
+# Configuration
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/PolyScheConfigVersion.cmake"
+  VERSION ${POLYSCHE_VERSION}
+  COMPATIBILITY ExactVersion
+)
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PolyScheConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/PolyScheConfig.cmake"
+  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Foo"
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR
+)
+
 # Installation
 install(TARGETS polysche
   PUBLIC_HEADER DESTINATION include
 )
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/" DESTINATION include)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/PolyScheConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/PolyScheConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PolySche )
